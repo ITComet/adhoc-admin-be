@@ -16,12 +16,24 @@ export class AuthService {
   async signup(dto: AuthDto) {
     //generate the password hash
     const hash = await argon.hash(dto.password);
+    //find the role id
+    const userrole = await this.prisma.userRole.findFirst({
+      // Change this line
+      where: {
+        name: dto.role,
+      },
+    });
+
+    if (!userrole) {
+      throw new ForbiddenException('Role does not exist');
+    }
     //save the new user in the db
     try {
       const user = await this.prisma.user.create({
         data: {
           email: dto.email,
           hash,
+          userRoleId: userrole.id,
         },
       });
 

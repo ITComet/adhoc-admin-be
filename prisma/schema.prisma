@@ -1,0 +1,133 @@
+// This is your Prisma schema file,
+// learn more about it in the docs https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userRoleId Int
+  userRole   UserRole @relation(fields: [userRoleId], references: [id])
+
+  email String @unique
+  hash  String
+
+  firstName String?
+  lastName  String?
+
+  bookmarks Bookmark[]
+
+  @@map("users")
+}
+
+model UserRole {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users User[]
+
+  @@map("user_roles")
+}
+
+model Bookmark {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title       String
+  description String?
+  link        String
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  @@map("bookmarks")
+}
+
+model CUser {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      String  @unique
+  role      String
+  name      String
+  firstName String
+  email     String  @unique
+  phoneInt  Int
+  detail1   String
+  detail2   String
+  status    Boolean
+
+  is_exist Boolean
+}
+
+model Partner {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  partnerName    String
+  posKey         String
+  posSecret      String
+  companyName    String
+  companyAbb     String
+  cui            String
+  noRegistration Int
+  address        String
+  phoneInt       Int
+  category       String
+  currency       String
+  accountUser    String
+  firstName      String
+  name           String
+  password       String
+  payPlan        String
+
+  locations Location[]
+  @@map("partners")
+}
+
+model Location {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  locationName    String
+  fullAddress     String
+  phoneNumber     String
+  posSystem       String
+  locationId      Int      @unique
+  autoAcceptOrder Boolean
+  onlinePayment   Boolean
+  monSTime        DateTime
+  monETime        DateTime
+  tueSTime        DateTime
+  tueETime        DateTime
+  wedSTime        DateTime
+  wedETime        DateTime
+  thuSTime        DateTime
+  thuETime        DateTime
+  friSTime        DateTime
+  friETime        DateTime
+  satSTime        DateTime
+  satETime        DateTime
+  sunSTime        DateTime
+  sunETime        DateTime
+
+  partnerId Int
+  partner   Partner @relation(fields: [partnerId], references: [id])
+  @@map("locations")
+}
